@@ -1,25 +1,112 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Fitbit data analysis"
+output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-## Loading and preprocessing the data
+## Load File :
+
+```{r libraryl, echo=TRUE}
+
+library(ggplot2)
+library(scales)
+library(mice)
+
+activity <- read.csv("activity.csv")
+head(activity)
+
+dim(activity)
+
+summary(activity)
+
+```
+
+
+## What is mean total number of steps taken per day? :
+
+## 1. Calculate the total number of steps taken per day :
 
 
 
-## What is mean total number of steps taken per day?
+```{r total, echo=TRUE}
+
+stepsperday <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
+
+stepsperday
+
+```
+## 2. Histogram
+
+```{r hist, echo=TRUE}
+
+qplot(stepsperday, xlab='Total steps per day', ylab='Frequency',binwidth=100)
+
+```
+
+## 3. Mean and Median of total steps per day
+
+
+```{r mean, echo=TRUE}
+stepbymean <- mean(stepsperday)
+stepbymean
+
+stepbymedian <- median(stepsperday)
+stepbymedian
+```
+
+## 4. Time series plot - avg daily steps 
+
+```{r timeseries, echo=TRUE}
+averagesteps <- aggregate(x=list(meansteps=activity$steps), by=list(interval=activity$interval), FUN=mean, na.rm=TRUE)
+
+ggplot(data=averagesteps, aes(x=interval, y=meansteps)) +
+    geom_bar(stat="identity") +
+    xlab("5-minute interval") +
+    ylab("average number of steps taken") 
+```
+
+## 5. The 5-minute interval 
+
+
+```{r, echo=TRUE}
+maxsteps <- which.max(averagesteps$meansteps)
+timetosteps <-  gsub("([0-9]{1,2})([0-9]{2})", "\\1:\\2", averagesteps[maxsteps,'interval'])
+timetosteps
+```
+
+## 6. Imputing missing data 
+
+
+```{r, echo=TRUE}
+impactivity <- activity
+impactivity$steps[is.na(impactivity$steps)] <- mean(activity$steps, na.rm=TRUE)
+```
+
+## 7. Imputed Histogram 
 
 
 
-## What is the average daily activity pattern?
+```{r, echo=TRUE}
+impstepsperday <- tapply(impactivity$steps, impactivity$date, sum, na.rm=TRUE)
+qplot(impstepsperday, xlab='Total steps per day', ylab='Frequency',main="Total Number of Steps Taken Each Day (Imputed)",binwidth=100)
+```
+
+## 8. Panel plot for weekdays and weekends
 
 
+```{r, echo=TRUE}
+impactivity$dateType <-  ifelse(as.POSIXlt(impactivity$date)$wday %in% c(0,6), 'weekend', 'weekday')
 
-## Imputing missing values
+averagedActivityDataImputed <- aggregate(steps ~ interval + dateType, data=impactivity, mean)
 
+ggplot(averagedActivityDataImputed, aes(interval, steps)) + 
+    geom_line() + 
+    facet_grid(dateType ~ .) +
+    xlab("5-minute interval") + 
+    ylab("avarage number of steps")
 
+```
 
-## Are there differences in activity patterns between weekdays and weekends?
