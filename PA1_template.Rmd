@@ -62,10 +62,10 @@ stepbymedian
 ```{r timeseries, echo=TRUE}
 averagesteps <- aggregate(x=list(meansteps=activity$steps), by=list(interval=activity$interval), FUN=mean, na.rm=TRUE)
 
-ggplot(data=averagesteps, aes(x=interval, y=meansteps)) +
-    geom_bar(stat="identity") +
+ggplot(data=averagesteps, aes(x=interval, y=meansteps), binwidth=300) +
+    geom_histogram(stat="identity" ) +
     xlab("5-minute interval") +
-    ylab("average number of steps taken") 
+    ylab("average number of steps taken" ) 
 ```
 
 ## 5. The 5-minute interval 
@@ -91,7 +91,7 @@ impactivity$steps[is.na(impactivity$steps)] <- mean(activity$steps, na.rm=TRUE)
 
 ```{r, echo=TRUE}
 impstepsperday <- tapply(impactivity$steps, impactivity$date, sum, na.rm=TRUE)
-qplot(impstepsperday, xlab='Total steps per day', ylab='Frequency',main="Total Number of Steps Taken Each Day (Imputed)",binwidth=100)
+qplot(impstepsperday, xlab='Total steps per day', ylab='Frequency',main="Total Number of Steps Taken Each Day (Imputed)",binwidth=500)
 ```
 
 ## 8. Panel plot for weekdays and weekends

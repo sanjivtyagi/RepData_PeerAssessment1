@@ -99,10 +99,12 @@ What is mean total number of steps taken per day? :
 
     averagesteps <- aggregate(x=list(meansteps=activity$steps), by=list(interval=activity$interval), FUN=mean, na.rm=TRUE)
 
-    ggplot(data=averagesteps, aes(x=interval, y=meansteps)) +
-        geom_bar(stat="identity") +
+    ggplot(data=averagesteps, aes(x=interval, y=meansteps), binwidth=300) +
+        geom_histogram(stat="identity" ) +
         xlab("5-minute interval") +
-        ylab("average number of steps taken") 
+        ylab("average number of steps taken" ) 
+
+    ## Warning: Ignoring unknown parameters: binwidth, bins, pad
 
 ![](PA1_template_files/figure-markdown_strict/timeseries-1.png)
 
@@ -125,7 +127,7 @@ What is mean total number of steps taken per day? :
 --------------------
 
     impstepsperday <- tapply(impactivity$steps, impactivity$date, sum, na.rm=TRUE)
-    qplot(impstepsperday, xlab='Total steps per day', ylab='Frequency',main="Total Number of Steps Taken Each Day (Imputed)",binwidth=100)
+    qplot(impstepsperday, xlab='Total steps per day', ylab='Frequency',main="Total Number of Steps Taken Each Day (Imputed)",binwidth=500)
 
 ![](PA1_template_files/figure-markdown_strict/unnamed-chunk-3-1.png)
 
