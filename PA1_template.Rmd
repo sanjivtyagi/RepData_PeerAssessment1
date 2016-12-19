@@ -1,6 +1,6 @@
 ---
 title: "Fitbit data analysis"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
@@ -38,11 +38,11 @@ stepsperday <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
 stepsperday
 
 ```
-## 2. Histogram
+## 2. Total steps per day
 
 ```{r hist, echo=TRUE}
 
-qplot(stepsperday, xlab='Total steps per day', ylab='Frequency',binwidth=100)
+qplot(stepsperday, xlab='Total steps per day', ylab='Frequency',binwidth=500)
 
 ```
 
